@@ -47,8 +47,7 @@ app.get("/register",(req,res)=>{
 
 //handle user sign-up
 app.post("/register",(req,res)=>{
-    req.body.username
-    req.body.password
+    
      User.register(new User({username:req.body.username}),req.body.password,(err,user)=>{
          if(err){
              console.log(err);
@@ -73,7 +72,18 @@ app.post("/login", passport.authenticate("local",{
 }),function(req,res){
 }); 
 
+//LOGOUT ROUTE
+app.get("/logout",(req,res)=>{
+    req.logout();
+    res.redirect("/");
+});
 
+// function isLoggedIn(req,res,next){
+//     if(req.isAuthenticated()){
+//         return next();
+//     }
+//     res.redirect("/login");
+// }
 
 const port=3002;
 app.listen(port,()=>{
