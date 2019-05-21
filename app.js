@@ -13,6 +13,7 @@ mongoose.connect("mongodb://localhost/auth_demo_app",{useNewUrlParser:true});
 
 var app=express();
 app.set("view engine","ejs");
+app.use(bodyparser.urlencoded({extended:true}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(require("express-session")({
@@ -24,6 +25,11 @@ app.use(require("express-session")({
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+//===============
+//ROUTE
+//================
+
+
 app.get("/",(req,res)=>{
     res.render("home");
 });
@@ -31,7 +37,26 @@ app.get("/",(req,res)=>{
 app.get("/secret",(req,res)=>{
     res.render("secret");
 });
+//AUTH ROUTEs
 
+//show register form
+app.get("/register",(req,res)=>{
+    res.render("register");
+});
+
+//handle user sign-up
+app.post("/register",(req,res)=>{
+     User.register(new User({username:req.body.name}),req.body.password,(err,user)=>{
+         if(err){
+             console.log(err);
+             return res.render("register");
+         }else{
+             passport.authenticate("local")(req,res,function(){
+                 res.redirect("/secret");
+             });
+         }
+     });
+});
 
 
 
